@@ -706,3 +706,31 @@ it("assigns originalTime as 'time' in owidRows", () => {
         ])
     )
 })
+
+describe.only("updating column defs", () => {
+    const sampleInput = `entityName,entityId,entityCode,year,sampleSlug,time
+     United Kingdom,1,GBR,2000,58892514,0,2000
+    Ireland,2,IRL,2000,3805174,0,2000`
+
+    const table = new OwidTable(sampleInput, [
+        { slug: "sampleSlug", display: { name: "original" } },
+    ])
+
+    test("updating non-transforming properties like name, unit, etc.", () => {
+        const newTable = table.updateDimensionDisplayProperty(
+            "sampleSlug",
+            "name",
+            "new"
+        )
+        expect(newTable.get("sampleSlug")?.def?.display?.name).toEqual("new")
+    })
+
+    test("updating unit conversion facor", () => {
+        const newTable = table.updateDimensionDisplayProperty(
+            "sampleSlug",
+            "name",
+            "new"
+        )
+        expect(newTable.get("sampleSlug")?.def?.display?.name).toEqual("new")
+    })
+})

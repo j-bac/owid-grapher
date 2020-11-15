@@ -1,4 +1,7 @@
-import { LegacyVariablesAndEntityKey } from "./LegacyVariableCode"
+import {
+    LegacyVariablesAndEntityKey,
+    LegacyVariableDisplayConfigInterface,
+} from "./LegacyVariableCode"
 import {
     max,
     min,
@@ -331,6 +334,30 @@ export class OwidTable extends CoreTable<OwidRow, OwidColumnDef> {
             `Transformed columns from absolute numbers to % of abs sum of ${columnSlugs.join(
                 ","
             )} `,
+            TransformType.UpdateColumnDefs
+        )
+    }
+
+    updateDimensionDisplayProperty(
+        columnSlug: ColumnSlug,
+        property: keyof LegacyVariableDisplayConfigInterface,
+        newValue: any
+    ) {
+        const newDefs = this.defs.map((def) => {
+            if (columnSlug === def.slug) {
+                const display: LegacyVariableDisplayConfigInterface = {
+                    ...def.display,
+                }
+                display[property] = newValue
+                return { ...def, display }
+            }
+            return def
+        })
+
+        return this.transform(
+            this.columnStore,
+            newDefs,
+            `Updated def of ${columnSlug} `,
             TransformType.UpdateColumnDefs
         )
     }
