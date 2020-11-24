@@ -1,7 +1,10 @@
 import { strToQueryParams } from "utils/client/url"
 
-export const DEFAULT_COLUMN_DELIMITER = "-is-"
-export const DEFAULT_ROW_DELIMITER = "-and-"
+export const DEFAULT_COLUMN_DELIMITER = "="
+export const DEFAULT_ROW_DELIMITER = "&"
+
+export const decodeComponent = decodeURIComponent
+export const encodeComponent = encodeURIComponent
 
 // Note: assumes that neither no key nor value in obj has a newline or tab character
 export const objectToPatch = (
@@ -10,7 +13,9 @@ export const objectToPatch = (
     columnDelimiter = DEFAULT_COLUMN_DELIMITER
 ) =>
     Object.keys(obj)
-        .map((key) => [key, obj[key]].join(columnDelimiter))
+        .map((key) =>
+            [key, obj[key]].map(encodeComponent).join(columnDelimiter)
+        )
         .join(rowDelimiter)
 
 export const objectFromPatch = (
@@ -22,9 +27,10 @@ export const objectFromPatch = (
     patch.split(rowDelimiter).forEach((line) => {
         line = line.trim()
         if (!line) return
-        const words = line.split(columnDelimiter)
-        const key = words.shift() as string
-        obj[key] = words.join(columnDelimiter)
+        // As long as encode() correctly escapes columnDelimiters,
+        // there can only be up to 2 elements after the split().
+        const [key, value] = line.split(columnDelimiter).map(decodeComponent)
+        obj[key] = value
     })
     return obj
 }
@@ -32,4 +38,4 @@ export const objectFromPatch = (
 export const getPatchFromQueryString = (
     queryString = "",
     patchKeyword = "patch"
-) => decodeURIComponent(strToQueryParams(queryString)[patchKeyword] ?? "")
+) => strToQueryParams(queryString)[patchKeyword] ?? ""
