@@ -1,12 +1,36 @@
 // All of this information is available to the client-side code
 // DO NOT retrieve sensitive information from the environment in here! :O
 
+import { clientSettings } from "./localSettings"
+
 // todo: handle when someone overrides these 3, the derived vars
 const ADMIN_SERVER_PORT = 3030
 const ADMIN_SERVER_HOST = "localhost"
 const BAKED_BASE_URL = `http://${ADMIN_SERVER_HOST}:${ADMIN_SERVER_PORT}`
 
-const defaultSettings = {
+export interface ClientSettings {
+    ENV: string
+    ADMIN_SERVER_HOST: string
+    ADMIN_SERVER_PORT: number
+    BAKED_BASE_URL: string
+    BAKED_GRAPHER_URL: string
+    ADMIN_BASE_URL: string
+    WORDPRESS_URL: string
+    GRAPHER_VERSION: string
+    OPTIMIZE_SVG_EXPORTS: boolean
+    GITHUB_USERNAME: string
+    GIT_DEFAULT_USERNAME: string
+    GIT_DEFAULT_EMAIL: string
+    BLOG_POSTS_PER_PAGE: number
+    BLOG_SLUG: string
+    ALGOLIA_ID: string
+    ALGOLIA_SEARCH_KEY: string
+    STRIPE_PUBLIC_KEY: string
+    DONATE_API_URL: string
+    RECAPTCHA_SITE_KEY: string
+}
+
+const defaultSettings: ClientSettings = {
     ENV: "development",
     ADMIN_SERVER_HOST,
     ADMIN_SERVER_PORT,
@@ -52,7 +76,7 @@ const {
     OPTIMIZE_SVG_EXPORTS,
 } = {
     ...defaultSettings,
-    // todo: load overrides
+    ...clientSettings,
 }
 
 export {

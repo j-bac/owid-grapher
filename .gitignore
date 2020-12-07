@@ -22,3 +22,4 @@ public/covidChartAndVariableMeta.json
 .storybook/build
 *.tempDeployScript.sh
 .env
+settings/localSettings.ts
